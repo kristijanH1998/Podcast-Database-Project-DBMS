@@ -1,0 +1,223 @@
+1) Person:
+CREATE TABLE `Person` (
+`PersonID` varchar(11) NOT NULL,
+`Firstname` varchar(100) NOT NULL,
+`Lastname` varchar(100) NOT NULL,
+`Nickname` varchar(50) DEFAULT NULL,
+`Title` varchar(30) DEFAULT NULL,
+`Age` int DEFAULT NULL,
+`Bio` mediumtext,
+`ProfilePic` blob,
+`Linkedin` varchar(100) DEFAULT NULL,
+`Twitter` varchar(100) DEFAULT NULL,
+`Facebook` varchar(100) DEFAULT NULL,
+`Wiki` varchar(100) DEFAULT NULL,
+`Youtube` varchar(100) DEFAULT NULL,
+`Instagram` varchar(100) DEFAULT NULL,
+PRIMARY KEY (`PersonID`),
+UNIQUE KEY `PersonID` (`PersonID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+2) Podcaster:
+CREATE TABLE `Podcaster` (
+`PersonID` varchar(11) NOT NULL,
+`ExpertiseLevel` varchar(30) DEFAULT NULL,
+`NativeLanguage` varchar(30) DEFAULT NULL,
+PRIMARY KEY (`PersonID`),
+UNIQUE KEY `PersonID` (`PersonID`),
+CONSTRAINT `podcaster_ibfk_1` FOREIGN KEY (`PersonID`) REFERENCES `Person`
+(`PersonID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+3) Guest:
+
+CREATE TABLE `Guest` (
+`PersonID` varchar(11) NOT NULL,
+`Profession` varchar(30) DEFAULT NULL,
+PRIMARY KEY (`PersonID`),
+UNIQUE KEY `PersonID` (`PersonID`),
+CONSTRAINT `guest_ibfk_1` FOREIGN KEY (`PersonID`) REFERENCES `Person`
+(`PersonID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+4) Podcast:
+CREATE TABLE `Podcast` (
+`PodID` varchar(11) NOT NULL,
+`PodcastFormat` varchar(30) DEFAULT NULL,
+`Genre` varchar(40) DEFAULT NULL,
+`Title` varchar(40) DEFAULT NULL,
+`NumberOfEpisodes` int NOT NULL,
+`NumberOfSubscribers` int DEFAULT NULL,
+`AgeRating` varchar(5) DEFAULT NULL,
+`Description` mediumtext,
+PRIMARY KEY (`PodID`),
+UNIQUE KEY `PodID` (`PodID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+5) Episode:
+CREATE TABLE `Episode` (
+`EpID` varchar(11) NOT NULL,
+`EpDate` varchar(20) DEFAULT NULL,
+`EpLength` varchar(20) NOT NULL,
+`EpisodeNumber` varchar(20) DEFAULT NULL,
+`ViewerCount` varchar(20) DEFAULT NULL,
+`DownloadSize` varchar(20) NOT NULL,
+`Blurb` mediumtext,
+PRIMARY KEY (`EpID`),
+UNIQUE KEY `EpID` (`EpID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+6) CuratedCollection:
+CREATE TABLE `CuratedCollection` (
+`CurCollectionID` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT
+NULL,
+`Name` varchar(50) DEFAULT NULL,
+`TrackSize` varchar(20) DEFAULT NULL,
+`DateStarted` varchar(20) DEFAULT NULL,
+`DateFinished` varchar(20) DEFAULT NULL,
+`MaturityRating` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci
+DEFAULT NULL,
+`Description` mediumtext,
+PRIMARY KEY (`CurCollectionID`),
+UNIQUE KEY `CurCollectionID` (`CurCollectionID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+7) Artwork:
+CREATE TABLE `Artwork` (
+`ArtworkID` varchar(11) NOT NULL,
+`Artist` varchar(100) DEFAULT NULL,
+`Theme` varchar(50) DEFAULT NULL,
+`Title` varchar(100) DEFAULT NULL,
+`DateCreated` date DEFAULT NULL,
+`SubjectMatter` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci
+DEFAULT NULL,
+`MeaningDescription` mediumtext,
+PRIMARY KEY (`ArtworkID`),
+UNIQUE KEY `ArtworkID` (`ArtworkID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+8) Platform:
+CREATE TABLE `Platform` (
+`PlatformID` varchar(11) NOT NULL,
+`Name` varchar(50) DEFAULT NULL,
+`WebsiteURL` varchar(100) DEFAULT NULL,
+`Device` varchar(50) DEFAULT NULL,
+`DownloadLink` varchar(100) DEFAULT NULL,
+`Cost` varchar(20) DEFAULT NULL,
+PRIMARY KEY (`PlatformID`),
+UNIQUE KEY `PlatformID` (`PlatformID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+9) Rating:
+CREATE TABLE `Rating` (
+`EpID` varchar(11) NOT NULL,
+`ReviewComment` varchar(200) DEFAULT NULL,
+`NumberOfStars` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci
+DEFAULT NULL,
+`TimeAndDate` datetime NOT NULL,
+`Username` varchar(50) NOT NULL,
+`NumberOfLikes` int DEFAULT NULL,
+PRIMARY KEY (`TimeAndDate`,`Username`,`EpID`),
+UNIQUE KEY `EpID` (`EpID`),
+UNIQUE KEY `Username_2` (`Username`),
+CONSTRAINT `Rating_EpID_fk` FOREIGN KEY (`EpID`) REFERENCES `Episode` (`EpID`) ON
+DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+10) Hosts:
+CREATE TABLE `Hosts` (
+`PersonID` varchar(11) NOT NULL,
+`PodID` varchar(11) NOT NULL,
+PRIMARY KEY (`PersonID`,`PodID`),
+KEY `hosts_ibfk_1` (`PodID`),
+CONSTRAINT `hosts_ibfk_1` FOREIGN KEY (`PodID`) REFERENCES `Podcast` (`PodID`) ON
+DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT `Hosts_PersonID_fk` FOREIGN KEY (`PersonID`) REFERENCES `Podcaster`
+(`PersonID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+11) AppearsIn:
+CREATE TABLE `AppearsIn` (
+`PersonID` varchar(11) NOT NULL,
+`EpID` varchar(11) NOT NULL,
+PRIMARY KEY (`PersonID`,`EpID`),
+KEY `appearsin_ibfk_1` (`EpID`),
+CONSTRAINT `appearsin_ibfk_1` FOREIGN KEY (`EpID`) REFERENCES `Episode`
+(`EpID`) ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT `PersonID` FOREIGN KEY (`PersonID`) REFERENCES `Guest`
+(`PersonID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+12) RunOn:
+CREATE TABLE `RunOn` (
+`PlatformID` varchar(11) NOT NULL,
+`PodID` varchar(11) NOT NULL,
+PRIMARY KEY (`PlatformID`,`PodID`),
+KEY `runon_ibfk_1` (`PodID`),
+KEY `runon_ibfk_2` (`PlatformID`) USING BTREE,
+CONSTRAINT `runon_ibfk_1` FOREIGN KEY (`PodID`) REFERENCES `Podcast` (`PodID`) ON
+DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT `RunOn_PlatformID_fk` FOREIGN KEY (`PlatformID`) REFERENCES `Platform`
+(`PlatformID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+13) Offers:
+CREATE TABLE `Offers` (
+`PodID` varchar(11) NOT NULL,
+`CurCollectionID` varchar(11) NOT NULL,
+PRIMARY KEY (`PodID`,`CurCollectionID`),
+KEY `CurCollectionID` (`CurCollectionID`),
+CONSTRAINT `offers_ibfk_1` FOREIGN KEY (`CurCollectionID`) REFERENCES
+`CuratedCollection` (`CurCollectionID`) ON DELETE CASCADE,
+CONSTRAINT `Offers_PodID_fk` FOREIGN KEY (`PodID`) REFERENCES `Podcast` (`PodID`)
+ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+14) Debuts:
+CREATE TABLE `Debuts` (
+`PodID` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+`EpID` varchar(11) NOT NULL,
+PRIMARY KEY (`EpID`),
+UNIQUE KEY `EpID` (`EpID`),
+KEY `debuts_ibfk_1` (`PodID`),
+CONSTRAINT `Debuts_EpID_fk` FOREIGN KEY (`EpID`) REFERENCES `Episode` (`EpID`)
+ON DELETE CASCADE,
+CONSTRAINT `debuts_ibfk_1` FOREIGN KEY (`PodID`) REFERENCES `Podcast` (`PodID`)
+ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+15) IsListedUnder:
+CREATE TABLE `IsListedUnder` (
+`CurCollectionID` varchar(11) NOT NULL,
+`EpID` varchar(11) NOT NULL,
+PRIMARY KEY (`CurCollectionID`,`EpID`),
+KEY `EpID` (`EpID`),
+CONSTRAINT `IsListedUnder_CurCollectionID_fk` FOREIGN KEY (`CurCollectionID`)
+REFERENCES `CuratedCollection` (`CurCollectionID`) ON DELETE CASCADE,
+CONSTRAINT `islistedunder_ibfk_1` FOREIGN KEY (`EpID`) REFERENCES `Episode` (`EpID`)
+ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+16) Presents:
+CREATE TABLE `Presents` (
+`EpID` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+`ArtworkID` varchar(11) NOT NULL,
+PRIMARY KEY (`ArtworkID`),
+UNIQUE KEY `ArtworkID` (`ArtworkID`),
+KEY `Presents_EpID_fk` (`EpID`),
+CONSTRAINT `Presents_ArtworkID_fk` FOREIGN KEY (`ArtworkID`) REFERENCES `Artwork`
+(`ArtworkID`) ON DELETE CASCADE,
+CONSTRAINT `Presents_EpID_fk` FOREIGN KEY (`EpID`) REFERENCES `Episode` (`EpID`)
+ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+17) RaterProfile:
+CREATE TABLE `RaterProfile` (
+`RaterPic` blob,
+`Username` varchar(50) NOT NULL,
+PRIMARY KEY (`Username`),
+UNIQUE KEY `Username_2` (`Username`),
+CONSTRAINT `raterprofile_ibfk_1` FOREIGN KEY (`Username`) REFERENCES `Rating`
+(`Username`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
